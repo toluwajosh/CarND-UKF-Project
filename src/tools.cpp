@@ -1,5 +1,7 @@
 #include <iostream>
+#include <cmath>
 #include "tools.h"
+
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -43,4 +45,14 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
   //return the result
   return rmse;
+}
+
+double Tools::NormalizeAng(const double& angle){
+  const double Max = M_PI;
+  const double Min = -M_PI;
+
+  return angle < Min
+    ? Max + std::fmod(angle - Min, Max - Min)
+    : std::fmod(angle - Min, Max - Min) + Min;
+  //return atan2(sin(angle), cos(angle));
 }

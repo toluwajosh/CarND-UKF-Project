@@ -59,6 +59,7 @@ int main(int argc, char* argv[]) {
 
   // for debug ///////////
   string in_file_name_ = "obj_pose-laser-radar-synthetic-input.txt";
+  //string in_file_name_ = "sample-laser-radar-measurement-data-1.txt";
   string out_file_name_ = "output.txt";
   // for debug ///////////
 

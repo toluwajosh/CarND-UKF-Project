@@ -115,7 +115,7 @@ public:
   */
   void UpdateOps(MatrixXd S, VectorXd z, int n_z);
 
-  
+  Tools tools;
 };
 
 #endif /* UKF_H */
