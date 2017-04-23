@@ -48,11 +48,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 }
 
 double Tools::NormalizeAng(const double& angle){
-  const double Max = M_PI;
-  const double Min = -M_PI;
+  //const double Max = M_PI;
+  //const double Min = -M_PI;
 
-  return angle < Min
-    ? Max + std::fmod(angle - Min, Max - Min)
-    : std::fmod(angle - Min, Max - Min) + Min;
-  //return atan2(sin(angle), cos(angle));
+  //return angle < Min
+  //  ? Max + std::fmod(angle - Min, Max - Min)
+  //  : std::fmod(angle - Min, Max - Min) + Min;
+  return atan2(sin(angle), cos(angle));
 }

@@ -30,10 +30,10 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 30;
+  std_a_ = 2.5; //original: 30
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 30;
+  std_yawdd_ = 2.0; //original: 30
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -122,22 +122,19 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
       double psi_dot = atan2(vy, vx);
 
-      x_ << px, py, sqrt(px*px + py*py), psi, psi_dot;
-      //x_ << px, py, 0, 0, 0;
+      //x_ << px, py, sqrt(px*px + py*py), psi, psi_dot;
+      x_ << px, py, 0, 0, 0;
     }
     else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
       // Set state ekf_.x_ to the first measurement.
       double px = meas_package.raw_measurements_[0];
       double py = meas_package.raw_measurements_[1];
-      double vx = meas_package.raw_measurements_[2];
-      double vy = meas_package.raw_measurements_[3];
 
       double psi = atan2(py, px);
-      double psi_dot = atan2(vy, vx);
       
 
-      x_ << px, py, sqrt(px*px + py*py), psi, psi_dot;
-      //x_ << px, py, 0, 0, 0;
+      //x_ << px, py, sqrt(px*px + py*py), psi, psi_dot;
+      x_ << px, py, 0, 0, 0;
     }
 
     time_us_ = meas_package.timestamp_;
@@ -401,7 +398,111 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   You'll also need to calculate the lidar NIS.
   */
   // sensor state dimension
-  int n_z = 4;
+  int n_z = 2;
+
+  //create matrix for sigma points in measurement space
+  MatrixXd Zsig = MatrixXd(n_z, 2 * n_aug_ + 1);
+
+  //transform sigma points into measurement space ///// begin
+  for (int i = 0; i < 2 * n_aug_ + 1; i++){  //2n+1 simga points
+
+    // extract values for better readibility
+    double p_x = Xsig_pred_(0, i);
+    double p_y = Xsig_pred_(1, i);
+    double v = Xsig_pred_(2, i);
+    double yaw = Xsig_pred_(3, i);
+
+    //double v1 = cos(yaw)*v;
+    //double v2 = sin(yaw)*v;
+
+    // measurement model
+    Zsig(0, i) = Xsig_pred_(0, i);            //px
+    Zsig(1, i) = Xsig_pred_(1, i);            //py
+    //Zsig(2, i) = Xsig_pred_(2, i);
+    //Zsig(2, i) = Xsig_pred_(3, i);
+  }
+
+  //mean predicted measurement
+  VectorXd z_pred = VectorXd(n_z);
+  z_pred.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {
+    z_pred = z_pred + weights_(i) * Zsig.col(i);
+  }
+
+  //measurement covariance matrix S
+  MatrixXd S = MatrixXd(n_z, n_z);
+  S.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
+    //residual
+    VectorXd z_diff = Zsig.col(i) - z_pred;
+
+    ////angle normalization
+    z_diff(1) = tools.NormalizeAng(z_diff(1));
+    //while (z_diff(1)> M_PI) z_diff(1) -= 2.*M_PI;
+    //while (z_diff(1)<-M_PI) z_diff(1) += 2.*M_PI;
+
+    S = S + weights_(i) * z_diff * z_diff.transpose();
+  }
+  //std::cout << "size of s: " << S << std::endl;
+  //add measurement noise covariance matrix
+  MatrixXd R = MatrixXd(n_z, n_z);
+  //R << std_laspx_*std_laspx_, 0, 0, 0,
+  //    0, std_laspy_*std_laspy_, 0, 0,
+  //    0, 0, 0, 0,
+  //    0, 0, 0, 0;
+  R << std_laspx_*std_laspx_, 0,
+    0, std_laspy_*std_laspy_;
+  S = S + R;
+  //transform sigma points into measurement space ///// end
+
+  //create matrix for cross correlation Tc
+  MatrixXd Tc = MatrixXd(n_x_, n_z);
+  Tc.fill(0.0);
+
+  //calculate cross correlation matrix
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
+
+    //residual
+    VectorXd z_diff = Zsig.col(i) - z_pred;
+    ////angle normalization
+    z_diff(1) = tools.NormalizeAng(z_diff(1));
+    //while (z_diff(1)> M_PI) z_diff(1) -= 2.*M_PI;
+    //while (z_diff(1)<-M_PI) z_diff(1) += 2.*M_PI;
+
+    // state difference
+    VectorXd x_diff = Xsig_pred_.col(i) - x_;
+    ////angle normalization
+    x_diff(3) = tools.NormalizeAng(x_diff(3));
+    //while (x_diff(3)> M_PI) x_diff(3) -= 2.*M_PI;
+    //while (x_diff(3)<-M_PI) x_diff(3) += 2.*M_PI;
+
+    Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
+  }
+
+  //Kalman gain K;
+  MatrixXd K = Tc * S.inverse();
+
+  //actual measurement
+  VectorXd z = VectorXd(n_z);
+  z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1];// 0.0, 0.0;
+
+  //residual
+  VectorXd z_diff = z - z_pred;
+
+  //std::cout << "\n measurement error: \n" << z_diff << std::endl;
+
+  ////angle normalization
+  z_diff(1) = tools.NormalizeAng(z_diff(1));
+  //while (z_diff(1)> M_PI) z_diff(1) -= 2.*M_PI;
+  //while (z_diff(1)<-M_PI) z_diff(1) += 2.*M_PI;
+
+  //update state mean and covariance matrix
+  x_ = x_ + K * z_diff;
+  P_ = P_ - K*S*K.transpose();
+
+  std::cout << "x = \n" << x_ << std::endl;
+  std::cout << "P = \n" << x_ << std::endl;
+
 }
 
 /**

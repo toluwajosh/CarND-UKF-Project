@@ -58,8 +58,8 @@ int main(int argc, char* argv[]) {
   //string out_file_name_ = argv[2];
 
   // for debug ///////////
-  string in_file_name_ = "obj_pose-laser-radar-synthetic-input.txt";
-  //string in_file_name_ = "sample-laser-radar-measurement-data-1.txt";
+  //string in_file_name_ = "obj_pose-laser-radar-synthetic-input.txt";
+  string in_file_name_ = "sample-laser-radar-measurement-data-1.txt";
   string out_file_name_ = "output.txt";
   // for debug ///////////
 
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
 
     if (sensor_type.compare("L") == 0) {
       // laser measurement
-      continue; // for debug
+      //continue; // for debug
       // read measurements at this timestamp
       meas_package.sensor_type_ = MeasurementPackage::LASER;
       meas_package.raw_measurements_ = VectorXd(2);
