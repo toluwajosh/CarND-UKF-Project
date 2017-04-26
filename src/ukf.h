@@ -110,7 +110,7 @@ public:
   void UpdateRadar(MeasurementPackage meas_package);
   
   /**
-  * Update operations for both radar and laser sensors
+  * Perform update operations that is common to both ladar and radar
   * @param S, Z
   */
   void UpdateOps(MatrixXd S, VectorXd z, int n_z);

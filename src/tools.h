@@ -23,7 +23,7 @@ public:
   /**
   * A helper method to to nrmalize an angle betwee [-pi, pi].
   */
-  double NormalizeAng(const double& angle);
+  double NormalizeAng(double& angle);
 
 };
 

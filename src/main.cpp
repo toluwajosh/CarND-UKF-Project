@@ -52,16 +52,16 @@ void check_files(ifstream& in_file, string& in_name,
 
 int main(int argc, char* argv[]) {
 
-  //check_arguments(argc, argv);
+  check_arguments(argc, argv);
 
-  //string in_file_name_ = argv[1];
-  //string out_file_name_ = argv[2];
+  string in_file_name_ = argv[1];
+  string out_file_name_ = argv[2];
 
-  // for debug ///////////
-  //string in_file_name_ = "obj_pose-laser-radar-synthetic-input.txt";
-  string in_file_name_ = "sample-laser-radar-measurement-data-1.txt";
-  string out_file_name_ = "output.txt";
-  // for debug ///////////
+  //// for debug ///////////
+  ////string in_file_name_ = "obj_pose-laser-radar-synthetic-input.txt";
+  //string in_file_name_ = "sample-laser-radar-measurement-data-1.txt";
+  //string out_file_name_ = "output.txt";
+  //// for debug ///////////
 
   ifstream in_file_(in_file_name_.c_str(), ifstream::in);
   ofstream out_file_(out_file_name_.c_str(), ofstream::out);
