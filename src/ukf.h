@@ -108,6 +108,14 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+  
+  /**
+  * Perform update operations that is common to both ladar and radar
+  * @param S, Z
+  */
+  void UpdateOps(MatrixXd S, VectorXd z, int n_z);
+
+  Tools tools;
 };
 
 #endif /* UKF_H */

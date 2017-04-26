@@ -55,9 +55,15 @@ int main(int argc, char* argv[]) {
   check_arguments(argc, argv);
 
   string in_file_name_ = argv[1];
-  ifstream in_file_(in_file_name_.c_str(), ifstream::in);
-
   string out_file_name_ = argv[2];
+
+  //// for debug ///////////
+  ////string in_file_name_ = "obj_pose-laser-radar-synthetic-input.txt";
+  //string in_file_name_ = "sample-laser-radar-measurement-data-1.txt";
+  //string out_file_name_ = "output.txt";
+  //// for debug ///////////
+
+  ifstream in_file_(in_file_name_.c_str(), ifstream::in);
   ofstream out_file_(out_file_name_.c_str(), ofstream::out);
 
   check_files(in_file_, in_file_name_, out_file_, out_file_name_);
@@ -85,7 +91,7 @@ int main(int argc, char* argv[]) {
 
     if (sensor_type.compare("L") == 0) {
       // laser measurement
-
+      //continue; // for debug
       // read measurements at this timestamp
       meas_package.sensor_type_ = MeasurementPackage::LASER;
       meas_package.raw_measurements_ = VectorXd(2);
@@ -99,7 +105,7 @@ int main(int argc, char* argv[]) {
       measurement_pack_list.push_back(meas_package);
     } else if (sensor_type.compare("R") == 0) {
       // radar measurement
-
+      //continue; // for debug
       // read measurements at this timestamp
       meas_package.sensor_type_ = MeasurementPackage::RADAR;
       meas_package.raw_measurements_ = VectorXd(3);
