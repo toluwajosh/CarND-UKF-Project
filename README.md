@@ -1,7 +1,14 @@
-# Unscented Kalman Filter Project Starter Code
-Self-Driving Car Engineer Nanodegree Program
+# Unscented Kalman Filter Project
+
+## Self-Driving Engineer Nanodegree Term 2, Project 2
+
+**The aim of the project is to implement an unscented Kalman filter using the CTRV motion model.**
+
+The model is implemented in C++. Find the source code in [src](https://github.com/toluwajosh/CarND-UKF-Project/tree/master/src) and find the result analyses in [ukf-visualization.ipynb](https://github.com/toluwajosh/CarND-UKF-Project/blob/master/data_analysis/ukf-visualization.ipynb)
+
 
 ---
+Below are original instructions:
 
 ## Dependencies
 
