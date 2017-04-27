@@ -4,7 +4,7 @@
 
 **The aim of the project is to implement an unscented Kalman filter using the CTRV motion model.**
 
-Find result analyses in [ukf-visualization.ipynb](https://github.com/toluwajosh/CarND-UKF-Project/blob/master/data_analysis/ukf-visualization.ipynb)
+The model is implemented in C++. Find the source code in [src](https://github.com/toluwajosh/CarND-UKF-Project/tree/master/src) and find the result analyses in [ukf-visualization.ipynb](https://github.com/toluwajosh/CarND-UKF-Project/blob/master/data_analysis/ukf-visualization.ipynb)
 
 
 ---
